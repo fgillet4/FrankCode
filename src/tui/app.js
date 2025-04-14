@@ -144,10 +144,10 @@ screen.key(['C-c'], () => {
     keys: true,
     vi: false,  // Turn off vi mode for better mouse interactions
     inputOnFocus: false,
-    // Increase scroll amount for smoother experience
-    scrollAmount: 10,
-    // Lower scroll time for smoother animation
-    scrollSpeed:  1,
+    // Use larger scroll amount for faster navigation
+    scrollAmount: 5,
+    // Use faster scroll animation
+    scrollSpeed: 50,
     // Enable selection and copying
     clickable: true,
     copyMode: true,
@@ -302,26 +302,28 @@ conversationPanel.key(['a-down'], () => {
     screen.render();
   });
   
-  // Update the tab key handler to cycle through all elements
+  // Update the tab key handler to quickly switch between conversation and input
   screen.key(['tab'], () => {
     if (screen.focused === inputBox) {
-      fileTreePanel.focus();
-    } else if (screen.focused === fileTreePanel) {
+      // From input, go directly to conversation
       conversationPanel.focus();
+      statusBarController.update('Scroll mode active. Press Tab to return to input.');
     } else {
+      // From anywhere else, go to input
       inputBox.focus();
+      statusBarController.update('Ready for input');
     }
     screen.render();
   });
   
-  // Add a mouse handler for better wheel behavior
+  // Add smoother wheel behavior for trackpad scrolling
   conversationPanel.on('wheeldown', () => {
-    conversationPanel.scroll(3); // Scroll down 3 lines
+    conversationPanel.scroll(1); // Scroll by just 1 line for smoother trackpad scrolling
     screen.render();
   });
   
   conversationPanel.on('wheelup', () => {
-    conversationPanel.scroll(-3); // Scroll up 3 lines
+    conversationPanel.scroll(-1); // Scroll by just 1 line for smoother trackpad scrolling
     screen.render();
   });
 

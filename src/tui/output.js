@@ -17,6 +17,61 @@ const { formatTimestamp } = require('../utils/formatters');
  * @returns {Object} The output renderer interface
  */
 function createOutputRenderer({ widget, tokenMonitor }) {
+  // Animation variables
+  let loadingAnimation = null;
+  let loadingFrame = 0;
+  const loadingFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  let loadingLineIndex = null;
+  
+  /**
+   * Start a loading animation
+   * 
+   * @param {string} message Loading message
+   * @returns {Function} Function to stop the animation
+   */
+  function startLoading(message = 'Thinking') {
+    // Stop any existing animation
+    if (loadingAnimation) {
+      clearInterval(loadingAnimation);
+      loadingAnimation = null;
+    }
+    
+    // Record current line position for the animation
+    loadingLineIndex = widget.getLines().length;
+    widget.log(chalk.cyan(`${loadingFrames[0]} ${message}...`));
+    widget.setScrollPerc(100);
+    widget.screen.render();
+    
+    // Start animation loop
+    loadingFrame = 0;
+    loadingAnimation = setInterval(() => {
+      if (!widget || !widget.setLine) return;
+      
+      loadingFrame = (loadingFrame + 1) % loadingFrames.length;
+      const spinner = loadingFrames[loadingFrame];
+      
+      // Update the line with the current frame
+      if (loadingLineIndex !== null) {
+        widget.setLine(loadingLineIndex, chalk.cyan(`${spinner} ${message}...`));
+        widget.screen.render();
+      }
+    }, 80); // Claude Code-like animation speed
+    
+    // Return a function to stop the animation
+    return () => {
+      if (loadingAnimation) {
+        clearInterval(loadingAnimation);
+        loadingAnimation = null;
+        
+        // Clear the line containing the animation
+        if (loadingLineIndex !== null) {
+          widget.setLine(loadingLineIndex, '');
+          widget.screen.render();
+          loadingLineIndex = null;
+        }
+      }
+    };
+  }
   /**
    * Add a user message to the conversation
    * 
@@ -252,7 +307,8 @@ function createOutputRenderer({ widget, tokenMonitor }) {
     addErrorMessage,
     addCodeBlock,
     processFileModifications,
-    clear
+    clear,
+    startLoading // Expose the loading animation
   };
 }
 

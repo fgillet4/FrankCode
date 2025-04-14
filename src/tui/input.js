@@ -347,15 +347,28 @@ ${formattedHistoryForSummary}`;
   
       // Check if this might be an agent task
       if (agentCommandProcessor && agentCommandProcessor.isPotentialAgentTask(input)) {
+        // Start the Claude Code-style loading animation
+        const stopLoading = outputRenderer.startLoading('Processing task');
+        
         const wasHandled = await agentCommandProcessor.processCommand(input);
+        
+        // Stop the loading animation
+        stopLoading();
+        
         if (wasHandled) {
           return;
         }
       }
       
       try {
+        // Start the Claude Code-style loading animation
+        const stopLoading = outputRenderer.startLoading('Thinking');
+        
         // Send to agent for processing
         const response = await agent.processMessage(input);
+        
+        // Stop the loading animation before showing response
+        stopLoading();
         
         // Display assistant response
         if (response && response.text) {
