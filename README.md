@@ -9,6 +9,7 @@ FrankCode is an open-source terminal-based coding agent powered by distributed l
 ## Features
 
 - **Terminal-Based UI**: Beautiful text-based interface that runs in your terminal.
+- **Built-in Text Editor**: Simple, distraction-free terminal text editor for quick edits.
 - **Project-Aware**: Continuously scans your project files to maintain context.
 - **Direct Code Modifications**: Makes changes to your files with your approval.
 - **Context Management**: Monitors token usage and suggests session refreshes.
@@ -38,6 +39,30 @@ Or if installed locally:
 ```bash
 npx frankcode run
 ```
+
+### Text Editor Mode
+
+FrankCode includes a simple terminal text editor:
+
+```bash
+# Open a file in the editor
+frankcode edit [filename]
+
+# Set editor theme
+frankcode edit [filename] --theme light
+```
+
+The editor includes robust functionality:
+- Ctrl+S to save
+- Ctrl+Q to quit (asks to save changes)
+- Ctrl+F to find text
+- Ctrl+G to go to specific line
+- Ctrl+X to cut selected text
+- Ctrl+C to copy selected text
+- Ctrl+V to paste from clipboard
+- Shift+Arrow keys to select text
+- Arrow keys and Page Up/Down for navigation
+- Escape key to exit editor
 
 ### Command Options
 
