@@ -87,66 +87,6 @@ function createOllamaClient(options) {
       return false;
     }
   }
-  // Add this function near the top of the ollama-api-integration.js file, just inside the createOllamaClient function
-async function testOllamaEndpoint() {
-    try {
-      console.log(`Testing Ollama API at ${baseUrl}...`);
-      
-      // Test /api/tags endpoint
-      console.log("Testing /api/tags endpoint...");
-      const tagsResponse = await fetch(`${baseUrl}/api/tags`);
-      console.log(`/api/tags status: ${tagsResponse.status}`);
-      
-      if (tagsResponse.ok) {
-        const tagsData = await tagsResponse.json();
-        console.log(`Available models: ${JSON.stringify(tagsData)}`);
-      }
-      
-      // Test minimal generate request
-      console.log("Testing /api/generate endpoint with minimal request...");
-      const minimalRequest = { model, prompt: "Hello" };
-      console.log(`Request body: ${JSON.stringify(minimalRequest)}`);
-      
-      const genResponse = await fetch(`${baseUrl}/api/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(minimalRequest)
-      });
-      
-      console.log(`/api/generate status: ${genResponse.status}`);
-      console.log(`/api/generate status text: ${genResponse.statusText}`);
-      
-      // Log full request and response details
-      console.log(`Full request URL: ${baseUrl}/api/generate`);
-      console.log(`Host: ${host}, Port: ${port}`);
-      
-      // Try different endpoint variations
-      console.log("Testing alternative endpoints...");
-      const endpoints = [
-        "/api/generate",
-        "/api/completion",
-        "/api/completions",
-        "/api/chat/completions"
-      ];
-      
-      for (const endpoint of endpoints) {
-        try {
-          const testResp = await fetch(`${baseUrl}${endpoint}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(minimalRequest)
-          });
-          console.log(`${endpoint} status: ${testResp.status}`);
-        } catch (err) {
-          console.log(`${endpoint} error: ${err.message}`);
-        }
-      }
-    } catch (error) {
-      console.error(`Test failed: ${error.message}`);
-    }
-  }
-  
-  // Then add this line at the end of the initialize function:
   
   /**
    * Generate a response from Ollama

@@ -129,6 +129,27 @@ python src/main.py --mode coordinator
 
 SynthBot will automatically connect to the coordinator and use the distributed LLM network for all inferences.
 
+## Environment Configuration
+
+FrankCode uses environment variables for configuration. Create a `.env` file in the project root using the provided `.env.example` template:
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit with your values
+nano .env  # or use your preferred editor
+```
+
+### Required Environment Variables
+
+- `OLLAMA_HOST`: Host for the Ollama instance (default: localhost)
+- `OLLAMA_PORT`: Port for the Ollama instance (default: 11434)
+
+### Optional Environment Variables
+
+- `NGROK_AUTH_TOKEN`: Your Ngrok authentication token (only needed if you want to expose your local server)
+
 ## Contributing
 
 Contributions welcome! Please check out our [contributing guidelines](CONTRIBUTING.md).

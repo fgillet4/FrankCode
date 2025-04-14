@@ -200,14 +200,12 @@ async function startServer(options = {}) {
             
             if (!ngrokToken) {
               logger.warn('NGROK_AUTH_TOKEN not found in environment variables');
-              logger.warn('Ngrok may not work correctly without authentication');
-              logger.warn('Try specifying the token directly when starting the server:');
-              logger.warn('  NGROK_AUTH_TOKEN=your_token node bin/start-server.js');
+              logger.warn('See .env.example file for configuration instructions');
             } else {
               // Configure ngrok with auth token
-              logger.info('Found NGROK_AUTH_TOKEN, authenticating...');
+              logger.info('Authenticating with Ngrok...');
               await ngrok.authtoken(ngrokToken);
-              logger.info('Ngrok authenticated successfully');
+              logger.info('Ngrok authentication completed');
             }
             
             // Start ngrok tunnel
