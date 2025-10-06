@@ -20,7 +20,8 @@ function createOutputRenderer({ widget, tokenMonitor }) {
   // Animation variables
   let loadingAnimation = null;
   let loadingFrame = 0;
-  const loadingFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+  // Exact Claude spinner frames (matching Claude exactly)
+  const loadingFrames = ['⣾', '⣽', '⣻', '⢿', '⡿', '⣟', '⣯', '⣷'];
   let loadingLineIndex = null;
   
   /**
@@ -38,7 +39,8 @@ function createOutputRenderer({ widget, tokenMonitor }) {
     
     // Record current line position for the animation
     loadingLineIndex = widget.getLines().length;
-    widget.log(chalk.cyan(`${loadingFrames[0]} ${message}...`));
+    // Use Claude's blue color with dim styling
+    widget.log(chalk.hex('#2E78D2').dim(`${loadingFrames[0]} ${message}...`));
     widget.setScrollPerc(100);
     widget.screen.render();
     
@@ -50,12 +52,12 @@ function createOutputRenderer({ widget, tokenMonitor }) {
       loadingFrame = (loadingFrame + 1) % loadingFrames.length;
       const spinner = loadingFrames[loadingFrame];
       
-      // Update the line with the current frame
+      // Update the line with the current frame using Claude blue
       if (loadingLineIndex !== null) {
-        widget.setLine(loadingLineIndex, chalk.cyan(`${spinner} ${message}...`));
+        widget.setLine(loadingLineIndex, chalk.hex('#2E78D2').dim(`${spinner} ${message}...`));
         widget.screen.render();
       }
-    }, 80); // Claude Code-like animation speed
+    }, 100); // Exact Claude animation speed (slightly slower)
     
     // Return a function to stop the animation
     return () => {

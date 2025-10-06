@@ -770,51 +770,73 @@ ${formattedHistoryForSummary}`;
    * Show help text
    */
   function showHelp() {
-    const helpText = `
+    // Basic help text for all modes
+    let helpText = `
   Available commands:
     /help             - Show this help text
     /clear            - Clear the conversation history
-    /compact          - Compact conversation history into a summary
-    /export [file]    - Export conversation with summary to a file 
     /refresh          - Refresh the file tree
-    /plan task        - Break down a task into smaller steps
-    /execute task     - Execute a task with step-by-step guidance
-    /code lang file   - Generate code in specified language and save to file
-    /run file         - Run a code file and show output
     /exec <command>   - Execute a shell command
     /shell <command>  - Same as /exec
     /ls               - List files (shortcut for /exec ls)
     /pwd              - Show current directory (shortcut for /exec pwd)
-    /models           - List available Ollama models
-    /selectmodel <n>  - Select a model by number or name
-    /offline          - Switch to offline mode (no LLM)
-    /online           - Switch to online mode (try connecting to LLM)
-    /load <file>      - Load a file into context
-    /save <file>      - Save the conversation to a file
-    /reset            - Reset agent context and conversation
-    /yes, /y          - Approve the current file modification
-    /no, /n           - Reject the current file modification
-    /yesall, /ya      - Approve all pending file modifications
-    /noall, /na       - Reject all pending file modifications
+    /load <file>      - Load a file
+    /save <file>      - Save to a file
     /create <file>    - Create a new file
     /edit <file>      - Edit an existing file
-
-  File Operations:
-    You can create or modify files by using the syntax:
-    \`\`\`file:path/to/file.js
-    // File content here
-    \`\`\`
 
   Keyboard shortcuts:
     Ctrl+C            - Exit application
     Ctrl+R            - Refresh file tree
     Ctrl+L            - Clear conversation
-    Ctrl+S            - Save conversation
     Ctrl+F            - Focus conversation panel (scroll mode)
     Tab               - Cycle focus between panels
     PageUp/PageDown   - Scroll conversation when focused
     Up/Down arrows    - Scroll conversation when focused
+    `;
+    
+    // Add editor-specific help if in editor mode
+    if (widget.screen.editorMode) {
+      helpText += `
+  Editor Mode Commands:
+    /save <file>      - Save editor content to a file
+    /load <file>      - Load a file into the editor
+    /run <file>       - Run the current file (if it's executable)
+    /syntax <lang>    - Set syntax highlighting (js, python, etc.)
+    
+  Editor Keyboard Shortcuts:
+    Ctrl+S            - Save file (will prompt for filename)
+    Ctrl+O            - Open file (will prompt for filename)
+    Ctrl+E            - Toggle between editor and conversation
+    Ctrl+F            - Find in text
+    `;
+    } else {
+      // Add AI-specific help if in normal mode
+      helpText += `
+  AI Assistant Commands:
+    /compact          - Compact conversation history into a summary
+    /export [file]    - Export conversation with summary to a file 
+    /plan task        - Break down a task into smaller steps
+    /execute task     - Execute a task with step-by-step guidance
+    /code lang file   - Generate code in specified language and save to file
+    /run file         - Run a code file and show output
+    /models           - List available Ollama models
+    /selectmodel <n>  - Select a model by number or name
+    /offline          - Switch to offline mode (no LLM)
+    /online           - Switch to online mode (try connecting to LLM)
+    /reset            - Reset agent context and conversation
+    /yes, /y          - Approve the current file modification
+    /no, /n           - Reject the current file modification
+    /yesall, /ya      - Approve all pending file modifications
+    /noall, /na       - Reject all pending file modifications
+  
+  File Operations:
+    You can create or modify files by using the syntax:
+    \`\`\`file:path/to/file.js
+    // File content here
+    \`\`\`
       `;
+    };
       
     outputRenderer.addSystemMessage(helpText);
   }

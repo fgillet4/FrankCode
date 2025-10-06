@@ -487,24 +487,57 @@ async function createSimpleEditor({ filePath = null, theme = 'dark' }) {
     if (selectionMode) endSelection();
   });
 
-  // For smooth line-by-line scrolling
+  // Override arrow key behavior for proper cursor movement
   editor.key(['up'], () => {
-    editor.scroll(-1);
+    // Move cursor up one line
+    editor._listener.emit('keypress', '', { name: 'up' });
     screen.render();
   });
 
   editor.key(['down'], () => {
-    editor.scroll(1);
+    // Move cursor down one line
+    editor._listener.emit('keypress', '', { name: 'down' });
+    screen.render();
+  });
+
+  editor.key(['left'], () => {
+    // Move cursor left one character
+    editor._listener.emit('keypress', '', { name: 'left' });
+    screen.render();
+  });
+
+  editor.key(['right'], () => {
+    // Move cursor right one character
+    editor._listener.emit('keypress', '', { name: 'right' });
     screen.render();
   });
 
   editor.key(['pageup'], () => {
-    editor.scroll(-(editor.height - 2));
+    // Move cursor up multiple lines
+    for (let i = 0; i < Math.max(1, editor.height / 2); i++) {
+      editor._listener.emit('keypress', '', { name: 'up' });
+    }
     screen.render();
   });
 
   editor.key(['pagedown'], () => {
-    editor.scroll(editor.height - 2);
+    // Move cursor down multiple lines
+    for (let i = 0; i < Math.max(1, editor.height / 2); i++) {
+      editor._listener.emit('keypress', '', { name: 'down' });
+    }
+    screen.render();
+  });
+  
+  // Add home and end keys
+  editor.key(['home'], () => {
+    // Move cursor to beginning of line
+    editor._listener.emit('keypress', '', { name: 'home' });
+    screen.render();
+  });
+  
+  editor.key(['end'], () => {
+    // Move cursor to end of line
+    editor._listener.emit('keypress', '', { name: 'end' });
     screen.render();
   });
 

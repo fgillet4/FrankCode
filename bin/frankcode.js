@@ -43,6 +43,7 @@ program
   .option('-v, --verbose', 'Enable verbose logging')
   .option('-q, --quiet', 'Quiet mode (errors only)')
   .option('--log-level <level>', 'Log level (error, warn, info, debug)')
+  .option('--editor', 'Start in plain text editor mode')
   .action(async (options) => {
     try {
       // Load configuration
@@ -50,6 +51,7 @@ program
         configPath: options.config,
         projectRoot: process.cwd(),
         offline: options.offline || false,
+        editorMode: options.editor || false, // Add editor mode flag
         ...options
       });
       
@@ -97,6 +99,27 @@ program
       console.log(`FrankCode configuration created at ${configPath}`);
     } catch (error) {
       console.error('Failed to initialize configuration:', error.message);
+      process.exit(1);
+    }
+  });
+
+// Pure text editor command
+program
+  .command('edit [file]')
+  .description('Open a file in a simple terminal text editor')
+  .option('--theme <theme>', 'Editor theme (default: "dark")')
+  .action(async (filePath, options) => {
+    try {
+      // Create simplified editor
+      const { createSimpleEditor } = require('../src/tui/editor');
+      
+      // Run the simple editor
+      await createSimpleEditor({
+        filePath: filePath || null,
+        theme: options.theme || 'dark'
+      });
+    } catch (error) {
+      console.error('Failed to start editor:', error.message);
       process.exit(1);
     }
   });

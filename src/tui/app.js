@@ -25,7 +25,7 @@ const { createAgentCommandProcessor } = require('../agent/agentUtils');
  * @param {string} options.projectRoot Project root directory
  * @returns {Object} The TUI application object
  */
-function createApp({ agent, apiClient, tokenMonitor, config, projectRoot }) {
+function createApp({ agent, apiClient, tokenMonitor, config, projectRoot, editorMode = false }) {
   // Create screen object
   const screen = blessed.screen({
     smartCSR: true,
@@ -125,8 +125,8 @@ screen.key(['C-c'], () => {
     tags: true
   });
   
-  // Create conversation panel (right side, 10/12 of width)
-  const conversationPanel = grid.set(0, 2, 8, 10, blessed.log, {
+  // Create conversation panel (right side, 10/12 of width) - smaller in editor mode
+  const conversationPanel = grid.set(0, 2, editorMode ? 4 : 8, 10, blessed.log, {
     label: 'Conversation',
     scrollable: true,
     alwaysScroll: true,
@@ -232,28 +232,62 @@ conversationPanel.key(['a-down'], () => {
   conversationPanel.scroll(conversationPanel.height / 2);
   screen.render();
 });
-  const inputBox = grid.set(8, 2, 2, 10, blessed.textarea, {
-    label: 'Command',
-    inputOnFocus: true,
-    padding: {
-      top: 1,
-      left: 2
-    },
-    style: {
-      fg: 'white',
-      bg: 'black',
-      focus: {
+  // Create input box with different size based on mode
+  let inputBox;
+  
+  if (editorMode) {
+    // In editor mode, use a much larger text area (6 rows instead of 2)
+    inputBox = grid.set(4, 2, 6, 10, blessed.textarea, {
+      label: 'Text Editor',
+      inputOnFocus: true,
+      padding: {
+        top: 1,
+        left: 2
+      },
+      style: {
         fg: 'white',
         bg: 'black',
-        border: {
-          fg: 'blue'
+        focus: {
+          fg: 'white',
+          bg: 'black',
+          border: {
+            fg: 'blue'
+          }
         }
+      },
+      border: {
+        type: 'line'
+      },
+      // Better for text editing
+      keys: true,
+      vi: true,
+      mouse: true
+    });
+  } else {
+    // Regular command input box
+    inputBox = grid.set(8, 2, 2, 10, blessed.textarea, {
+      label: 'Command',
+      inputOnFocus: true,
+      padding: {
+        top: 1,
+        left: 2
+      },
+      style: {
+        fg: 'white',
+        bg: 'black',
+        focus: {
+          fg: 'white',
+          bg: 'black',
+          border: {
+            fg: 'blue'
+          }
+        }
+      },
+      border: {
+        type: 'line'
       }
-    },
-    border: {
-      type: 'line'
-    }
-  });
+    });
+  }
   
   // Create status bar (bottom of screen, full width)
   const statusBar = grid.set(10, 0, 2, 12, blessed.box, {
@@ -388,6 +422,9 @@ conversationPanel.key(['a-down'], () => {
   // Initialize file tree
   fileTree.init();
   
+  // Store editor mode flag on screen for other components to access
+  screen.editorMode = editorMode;
+  
   // Return the application object
   return {
     screen,
@@ -396,9 +433,18 @@ conversationPanel.key(['a-down'], () => {
       // Initial rendering
       screen.render();
       
-      // Welcome message
-      outputRenderer.addSystemMessage('Welcome to FrankCode! Type your question or command below.');
-      statusBarController.update('Ready');
+      if (editorMode) {
+        // Special editor mode welcome
+        outputRenderer.addSystemMessage('Welcome to FrankCode Editor Mode!');
+        outputRenderer.addSystemMessage('• Type directly in the Text Editor panel');
+        outputRenderer.addSystemMessage('• Use /save filename to save content');
+        outputRenderer.addSystemMessage('• Use /load filename to load a file');
+        statusBarController.update('Editor Mode - Type /help for commands');
+      } else {
+        // Regular welcome message
+        outputRenderer.addSystemMessage('Welcome to FrankCode! Type your question or command below.');
+        statusBarController.update('Ready');
+      }
       
       // Other initialization...
     },

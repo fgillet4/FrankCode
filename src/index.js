@@ -130,7 +130,8 @@ async function startApp(config) {
       apiClient,
       tokenMonitor,
       config: config.ui,
-      projectRoot: config.projectRoot
+      projectRoot: config.projectRoot,
+      editorMode: config.editorMode || false // Pass editor mode flag to UI
     });
 
     app.screen.apiClient = apiClient;
